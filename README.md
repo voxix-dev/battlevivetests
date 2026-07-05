@@ -1,3 +1,3 @@
 # battlevivetests
-tests for: [battlevive](battlevive.com/) website
+tests for: [battlevive]https://(battlevive.com/) website
 
