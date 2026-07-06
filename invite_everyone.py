@@ -47,6 +47,7 @@ def invite_player(targetUserId,lobbyId,token):
     return requests.post(f"https://{BATTLEVIVE_URL}/api/matchmaking/invite-player",headers=headers,json=json) 
 
 def main():
+    title = input("Enter lobby name: ")
     if not SUPABASE_URL or not SUPABASE_API_KEY:
         print("Error: hardcode SUPABASE_URL, SUPABASE_API_KEY, before running.", file=sys.stderr)
         sys.exit(1)
@@ -59,7 +60,7 @@ def main():
         "Content-Type": "application/json",
     }
 
-    response = select_request(headers, url, select=id) 
+    response = select_request(headers, url, select=id,filters={"title":f"eq.{title}"}) 
     
     print(f"Lobby Status: {response.status_code}")
 
@@ -69,11 +70,10 @@ def main():
     print(f"Users Status: {response.status_code}")
 
     users = response.json()
-    while True :
-        for lobby in lobbies:
-            for user in users:
-                response=invite_player(lobbyId=lobby['id'], targetUserId=user['id'],token=token)
-                print(f"Invite Status: {response.status_code}")
+    for lobby in lobbies:
+        for user in users:
+            response=invite_player(lobbyId=lobby['id'], targetUserId=user['id'],token=token)
+            print(f"Invite Status: {response.status_code}")
 
 if __name__ == "__main__":
     main()
