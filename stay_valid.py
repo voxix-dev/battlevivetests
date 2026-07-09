@@ -24,6 +24,7 @@ class TokenManager:
         self.refresh_token = refresh_token
     
     def revalidate(self, refresh_token):
+        print("Revalidating tokens!")
         headers = {
             "Content-Type": "application/json",
             "apikey": SUPABASE_API_KEY
@@ -31,10 +32,11 @@ class TokenManager:
         json = {
             "refresh_token": refresh_token 
         }
-        response = requests.post(f"{SUPABASE_URL}", headers=headers, json=json)
-        
-        new_refresh_token =response.json["refresh_token"]
-        new_JWT_token= response.json["access_token"] 
+        response = requests.post(f"{SUPABASE_URL}/auth/v1/token?grant_type=refresh_token", headers=headers, json=json)
+        data=response.json()
+        print(response.status_code)
+        new_refresh_token =data["refresh_token"] 
+        new_JWT_token= data["access_token"] 
 
         return new_refresh_token,new_JWT_token  
 
@@ -99,6 +101,7 @@ def test_request(JWT_token):
 def main():
     save_state()
     tokens = TokenManager(JWT_token=get_JWT_token(),refresh_token=get_refresh_token())
+    tokens.revalidate_tokens()
     scheduler = BlockingScheduler()
     scheduler.add_job(tokens.revalidate_tokens, 'interval', minutes=30)
     scheduler.add_job(test_request,'interval',minutes=5, args=[tokens.JWT_token])
