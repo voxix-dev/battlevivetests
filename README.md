@@ -1,3 +1,3 @@
 # battlevivetests
-tests for: [battlevive](https://battlevive.com/) website
+some scripts used for testing: [battlevive](https://battlevive.com/) website
 
