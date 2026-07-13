@@ -3,6 +3,7 @@
 Run once, headed, to complete Discord OAuth manually.
 Saves authenticated browser state to playwright/.auth/state.json
 """
+# pyrefly: ignore [missing-import]
 from playwright.sync_api import sync_playwright
 
 AUTH_FILE = "playwright/.auth/state.json"

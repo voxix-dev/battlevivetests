@@ -51,7 +51,7 @@ def main():
         "Content-Type": "application/json",
     }
 
-    response = query_lobbies(headers, url, select="title,lobby_password")
+    response = query_lobbies(headers, url)
 
     print(f"Status: {response.status_code}")
     try:

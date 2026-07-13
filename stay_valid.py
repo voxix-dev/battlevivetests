@@ -24,7 +24,7 @@ class TokenManager:
         self.refresh_token = refresh_token
     
     def revalidate(self, refresh_token):
-        print("Revalidating tokens!")
+        
         headers = {
             "Content-Type": "application/json",
             "apikey": SUPABASE_API_KEY
@@ -34,10 +34,10 @@ class TokenManager:
         }
         response = requests.post(f"{SUPABASE_URL}/auth/v1/token?grant_type=refresh_token", headers=headers, json=json)
         data=response.json()
-        print(response.status_code)
         new_refresh_token =data["refresh_token"] 
         new_JWT_token= data["access_token"] 
-
+        print("Revalidating tokens!...")
+        print(f"New refresh token: {new_refresh_token} \n New JWt token: {new_JWT_token}")
         return new_refresh_token,new_JWT_token  
 
     def revalidate_tokens(self):
@@ -96,17 +96,21 @@ def test_request(JWT_token):
         "Authorization": f"Bearer {JWT_token}",
         "Content-Type": "application/json",
     }
-    print(requests.get(url=url,headers=headers).status_code)
+    response = requests.get(url=url,headers=headers)
+    print(response.status_code)
+    if response.status_code != 200:
+        print(response.json())
+    
 
 def main():
     save_state()
     tokens = TokenManager(JWT_token=get_JWT_token(),refresh_token=get_refresh_token())
     tokens.revalidate_tokens()
+    test_request(tokens.JWT_token)
     scheduler = BlockingScheduler()
     scheduler.add_job(tokens.revalidate_tokens, 'interval', minutes=30)
     scheduler.add_job(test_request,'interval',minutes=5, args=[tokens.JWT_token])
     scheduler.start()
-
 
 if __name__ == "__main__":
     main()

@@ -48,12 +48,11 @@ def invite_player(targetUserId,lobbyId,token):
 
 def main():
     title = input("Enter lobby name: ")
-    if not SUPABASE_URL or not SUPABASE_API_KEY:
-        print("Error: hardcode SUPABASE_URL, SUPABASE_API_KEY, before running.", file=sys.stderr)
-        sys.exit(1)
+
     token = get_access_token()
 
     url = f"{SUPABASE_URL}/rest/v1/lobbies"
+
     headers = {
         "apikey": SUPABASE_API_KEY,
         "Authorization": f"Bearer {token}",
@@ -67,6 +66,7 @@ def main():
     lobbies = response.json()
     url = f"{SUPABASE_URL}/rest/v1/users"
     response = select_request(headers, url, select=id)
+
     print(f"Users Status: {response.status_code}")
 
     users = response.json()
